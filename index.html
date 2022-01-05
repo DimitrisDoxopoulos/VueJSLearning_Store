@@ -4,14 +4,212 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
     <title>Product App</title>
 </head>
 <body>
+    <div class="nav-bar"></div>
     <div id="app">
-        <h1>Product Goes Here</h1>
+        <div class="product">
+            <div class="product-image">
+                <img v-bind:src="image" alt="green-shocks" class="">
+            </div>
+            <div class="product-info">
+                <h1>{{ product }}</h1>
+                <p v-if="inventory > 10">In Stock</p>
+                <p v-else-if="inventory <= 10 && inventory > 0">Almost Sold Out!</p>
+                <p v-else>Out Of Stock</p>
+
+                <ul>
+                    <li v-for="detail in details">{{ detail }}</li>
+                </ul>
+
+                <div v-for="variant in variants" 
+                    :key="variant.variantId"
+                    class="color-box"
+                    :style = "{backgroundColor: variant.variantColor}"
+                    @mouseover="updateProduct(variant.variantImage)"
+                >
+                </div>
+
+                <button 
+                    v-on:click="addToCart" 
+                    :disabled="!inStock"
+                    :class="{ disabledButton: !inStock }"
+                >
+                    Add to Cart
+                </button>
+
+                <div class="cart">
+                    <p>Cart({{ cart }})</p>
+
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="main.js"></script>
 </body>
 </html>
+
+<!-- 
+    ##########
+    # v-bind #
+    ##########
+
+    Dynamically binds an attribute to an expression
+    The attribute we bind now is src and the expression is
+    in quotes (image)
+
+    Because v-bind is so much used, there is a shorthand expression
+    for it. Instead ov writing v-bind each time, you can just type
+        :src
+    and it works the same way.
+
+    Other examples of v-bind use are:
+        :alt = 'description'
+        :href = 'url'
+        :title = 'toolTip'
+        :class = 'isActive'
+        :style = 'isStyled'
+        :disabled = 'isDisabled'
+    ________________________________________________________________
+
+    ##########
+    #  v-if  #
+    ##########
+
+    Works as a normal if conditional but in Vue's case we can link it
+    easily to an element and display wit when we want
+
+    ________________________________________________________________
+
+    ##########
+    # v-show #
+    ##########
+
+    We can link this to an element of the DOM. if the value that we
+    parse in it will be truthy, we will see the element displayed on
+    the window. If it is false, then it will get a css style of
+    display: none and will not show
+
+    ________________________________________________________________
+
+    ###########
+    #  v-for  #
+    ###########
+
+    In the expression of details, details refers to "details" in our
+    data (see main.js -> data). This is the collection that we are
+    looping over.
+    "Detail" is an alias for the elements that we are iterating
+    on as we loop through the collection.
+    We can use the same alias in the expression to print out each
+    string as we loop through them.
+
+    When rendering lists like variant (see main.js -> data), it's
+    highly recommended to use a special :key attribute so that Vue
+    can keep track of each node's identity. Here we are using the
+    shorthand for v-bind to bind the key to our variant's variantId
+    value.
+
+    ________________________________________________________________
+
+    ####################
+    # Methods and v-on #
+    ####################
+    
+    'Methods' is another property of the Vue instant. We can specify
+    methods that can be used in our project. Our button Add To Cart has
+    the v-on directive listening for a click. When it happens, v-on
+    is hearing it and triggers the addToCart method.
+
+    Because v-on is so common, it has its own shorthand, the @ sign.
+    So v-on:click can be specified as @click.
+
+    Other examples of v-on are:
+        <form @submit="addToCart">...</form>
+        <input @keyup.enter="send">
+
+    .enter is a modifier and what it does is that when the Enter key
+    lifts up after it's pressed, the "Send" method will be triggered
+
+    ________________________________________________________________
+
+    #################
+    # Style Binding #
+    #################
+    
+   In this example, we have a square div (taking its style from style.css)
+   and we are changing its background color based on the variantColor.
+   When the expression is evaluated, Vue knows to set the background
+   color to Green, so when we render it on the page we see the green div.
+
+   More examples of Style Binding:
+        <h1 :style="{ color: color}"> ... </h1>
+        <p :style="{ fontSize: fontSize}"> ... </p>
+
+        and in the Vue Instance part:
+            data: {
+                color: 'red',
+                fontSize: '12px'
+            }
+
+        or, to be more clean, we can bind style objects like this:
+            <p :style="styleObject"> ... </p>
+            
+            and in the Vue Instance part:
+            data: {
+                styleObject: {
+                    color: 'red',
+                    fontSize: '12px'
+                }
+        
+            }
+        
+        and if we have multiple style objects, we can combine them
+        in an array, like this:
+            <p :style="[styleObject1, styleObject2]"> ... </p>
+            
+            and in the Vue Instance part:
+            data: {
+                styleObject1: {
+                    color: 'red',
+                    fontSize: '12px'
+                },
+                styleObject2: {
+                    margin: '5px',
+                    padding: '20px'
+                }
+                
+            }
+
+    ________________________________________________________________
+
+    #################
+    # Class Binding #
+    #################
+    
+    Let's say that we have a div that already has a class. We can
+    dynamically add a class based on whether its expression is evaluating
+    to true. Since activeClass is true and errorClass is false, we will
+    add a class of "active" but not 'text-danger'. Our initial class
+    will still be there.
+
+    <div class="color-box">
+        :class="{ active: activeClass, 'text-danger': errorClass }"
+    </div>
+
+    JS:
+        data: {
+            activeClass: true,
+            errorClass: false
+        }
+    
+    Like Styling, we can bind an object of classes or an array of
+    classes.
+    
+    ________________________________________________________________
+
+-->
