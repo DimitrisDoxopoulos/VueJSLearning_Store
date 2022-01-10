@@ -10,45 +10,21 @@
 <body>
     <div class="nav-bar"></div>
     <div id="app">
-        <div class="product">
-            <div class="product-image">
-                <img v-bind:src="image" alt="green-shocks" class="">
-            </div>
-            <div class="product-info">
-                <h1>{{ product }}</h1>
-                <p v-if="inventory > 10">In Stock</p>
-                <p v-else-if="inventory <= 10 && inventory > 0">Almost Sold Out!</p>
-                <p v-else>Out Of Stock</p>
-
-                <ul>
-                    <li v-for="detail in details">{{ detail }}</li>
-                </ul>
-
-                <div v-for="variant in variants" 
-                    :key="variant.variantId"
-                    class="color-box"
-                    :style = "{backgroundColor: variant.variantColor}"
-                    @mouseover="updateProduct(variant.variantImage)"
-                >
-                </div>
-
-                <button 
-                    v-on:click="addToCart" 
-                    :disabled="!inStock"
-                    :class="{ disabledButton: !inStock }"
-                >
-                    Add to Cart
-                </button>
-
-                <div class="cart">
-                    <p>Cart({{ cart }})</p>
-
-                </div>
-            </div>
+        <div class="cart">
+            <p>Cart({{ cart.length }})</p>
         </div>
+        <product 
+            :premium = "premium" 
+            @add-to-cart="updateCart" 
+            @remove-from-cart="removeFromCart"
+        >
+        </product>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="product.js"></script>
+    <script src="product-tabs.js"></script>
+    <script src="product-review.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
@@ -209,6 +185,98 @@
     
     Like Styling, we can bind an object of classes or an array of
     classes.
+    
+    ________________________________________________________________
+
+    #######################
+    # Computed Properties #
+    #######################
+    
+    You can imagine the computed property acting like a calculator
+    which is fed values and then it computes with those new values
+    in order to return a new value. A thing that we should know about
+    computed properties is that they are cached, meaning that the
+    result is saved until its dependencies change. It is more efficient
+    to use a computed property, rather than a method, for an expensive
+    operation that we don't want to rerun every time we access it.
+
+    
+    ________________________________________________________________
+
+    ##############
+    # Components #
+    ##############
+    
+    Components are reusable blocks of code that are used to create a
+    more modular and maintainable codebase. To create a component, we
+    register it using Vue.component(). The first parameter used is the
+    name of our component. The second one is the Options object, which
+    is almost identical with the Vue instance Options object. Instead
+    of plugging into an element in the dom, like we do in the Vue
+    Instance, the component has a "template" property, which specifies
+    the structure of our component. Components can contain one root element
+    of the dom instance. They can also contain a "data" property but in
+    this case "data" is a function that returns a fresh data object for
+    each component. Why? Because if it was just a data object and we
+    were using that component all over our app, each copy of that
+    component would be sharing the same data. if, instead, we return
+    a fresh data object from a data function, then each component will
+    have its own unique data.
+
+    What if our components are nested somewhere? For example, inside
+    a parent component which has some message data? Since components
+    have their own isolated scope, they cannot reach outside themselves
+    and use the parent's data. Instead, we can use "Props". The prop
+    is a custom attribute for passing data into our components. In order
+    to receive props, a component needs to explicitly declare the props
+    it expects to receive, using the "props" option.
+
+    When declaring your component's props, it is recommended to specify
+    requirements but use built in prop validation. To do that, we 
+    switch our props array with a props object
+
+    Vue.component('product', {
+        props: {
+            message: {
+                type: String,
+                required: true,
+                default: "Hi"
+            }
+        },
+        template: `<div>{{ message }}</div>`,
+        data() {...}
+    })
+    ________________________________________________________________
+
+    #########
+    # $emit #
+    #########
+    
+    By using $emit, a component can let its parent know that an event
+    has happened. A component can use an event handler with the v-on
+    directive to listen for an event emission, which can trigger a
+    method on the parent. A component can $emit data along with the 
+    announcement that an event has occurred. A parent can use data
+    emitted from its child.
+    
+    ________________________________________________________________
+
+    ###########
+    # v-model #
+    ###########
+    
+    v-model gives us the ability of "two-way data binding", making
+    possible to track changes, for example, in forms and get the data
+    a user might be imputing.
+    
+    ________________________________________________________________
+
+    ###########
+    # Mounted #
+    ###########
+    
+    Mounted is a lifecycle hook. In mounted, we put code that we want
+    to run as soon as the component is mounted to the DOM.
     
     ________________________________________________________________
 
